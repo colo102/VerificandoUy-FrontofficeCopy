@@ -15,6 +15,7 @@
     "@mui/icons-material": "^6.1.2",
     "@mui/material": "^6.1.2",
     "@reduxjs/toolkit": "^2.2.8",
+    "animate.css": "^4.1.1",
     "firebase": "^10.14.1",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
