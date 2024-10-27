@@ -37,7 +37,15 @@ export const Appbar = () => {
           >
             Verificando UY
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" onClick={() => navigate("/login")}>
+            Login </Button>
+          <Button color="inherit" onClick={() => navigate("/register")}>
+            Registrarse
+          </Button>
+          <Button color="inherit" onClick={() => navigate("/chat")}>
+            Chat
+          </Button>
+
         </Toolbar>
       </AppBar>
     </Box>

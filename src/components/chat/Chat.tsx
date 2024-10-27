@@ -48,7 +48,7 @@ export const Chat = ({ height = 400, width = 250 }: ChatProps) => {
         flexDirection="column"
         sx={{
           height,
-          width: width * 4,
+          width: typeof width === "string" ? Number(width) * 4 : width * 4,//Convertir a número usando Number()
           boxShadow: "-4px -1px 18px -6px rgba(0,0,0,0.75);",
           borderRadius: "9px",
           overflow: "hidden",
