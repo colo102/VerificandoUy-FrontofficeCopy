@@ -10,12 +10,19 @@ import {
 import { Menu as MenuIcon } from "@mui/icons-material";
 import "./Appbar.css";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../../store/hooks/storeHooks";
+import useAuth from "../../../auth/hooks/useAuth";
 
 export const Appbar = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
+  const isUserLogged = useAppSelector(
+    (state) => state.verificandoUy.isUserLogged
+  );
+  const user = useAppSelector((state) => state.verificandoUy.usuario);
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" color="verificando_uy_light">
         <Toolbar>
           <IconButton
             size="large"
@@ -37,7 +44,18 @@ export const Appbar = () => {
           >
             Verificando UY
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button
+            color="inherit"
+            onClick={() => {
+              if (!isUserLogged) {
+                navigate("/auth/login");
+                return;
+              }
+              logout({ jwt: user.token });
+            }}
+          >
+            {!isUserLogged ? "Login" : "Logout"}
+          </Button>
         </Toolbar>
       </AppBar>
     </Box>

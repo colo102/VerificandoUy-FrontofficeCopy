@@ -33,7 +33,6 @@ export const Chat = ({ height = 400, width = 250 }: ChatProps) => {
             id: item.id,
           });
           setMessages(currentMessages);
-          console.log(currentMessages);
         });
       },
     });
@@ -108,7 +107,6 @@ const Message = ({
   const [containerStyle, setContainerStyle] = useState({});
 
   useEffect(() => {
-    console.log(isUserMessageOwner);
     setContainerStyle(
       isUserMessageOwner
         ? { ...commonMessageStyle, ...userMessageStyle }

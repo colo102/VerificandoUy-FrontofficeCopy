@@ -11,11 +11,26 @@ import { useState } from "react";
 import { FormContainer, FormItem } from "../components/Form";
 import { OtherMethods } from "../components/OtherMethodAuthentication";
 import { Link } from "react-router-dom";
-import VerificandoUyIcon from "../../../public/verificandoUySoloImagen.svg";
+import VerificandoUyIcon from "/src/assets/verificandoUySoloImagen.svg";
+import useAuth from "../hooks/useAuth";
 
 export const LoginPage = () => {
   const [correo, setCorreo] = useState<string>("");
   const [contraseña, setContraseña] = useState<string>("");
+  const { login } = useAuth();
+
+  const esValidoFormulario = (): boolean => {
+    if (!correo || !contraseña) return false;
+
+    return true;
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!esValidoFormulario()) return;
+
+    login({ email: correo, password: contraseña });
+  };
 
   return (
     <Grid2
@@ -25,12 +40,7 @@ export const LoginPage = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          console.log("datos ingresados", { correo, contraseña });
-        }}
-      >
+      <form onSubmit={handleSubmit}>
         <Paper
           sx={{ px: 2, pb: 2.5, pt: 0.5 }}
           className="animate__animated animate__fadeIn"

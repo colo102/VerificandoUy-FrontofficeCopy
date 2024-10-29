@@ -11,8 +11,8 @@ import { useState } from "react";
 import { Login } from "@mui/icons-material";
 import { OtherMethods } from "../components/OtherMethodAuthentication";
 import { Link } from "react-router-dom";
-import VerificandoUyIcon from "../../../public/verificandoUySoloImagen.svg";
-/* import VerificandoUyIcon from "../../../public/Logo-VerificandoUY.svg"; */
+import VerificandoUyIcon from "/src/assets/verificandoUySoloImagen.svg";
+import useAuth from "../hooks/useAuth";
 
 export const SignupPage = () => {
   const [correo, setCorreo] = useState<string>("");
@@ -22,6 +22,37 @@ export const SignupPage = () => {
   const [cedula, setCedula] = useState<string>("");
   const [contraseña, setContraseña] = useState<string>("");
 
+  const { signup } = useAuth();
+
+  const esValidoFormulario = (): boolean => {
+    if (
+      !correo ||
+      !nombre ||
+      !apellido ||
+      !fechaDeNacimiento ||
+      !cedula ||
+      !contraseña
+    )
+      return false;
+
+    return true;
+  };
+
+  const handleSignup = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!esValidoFormulario()) return;
+
+    signup({
+      apellido,
+      email: correo,
+      cedula,
+      fechaNacimiento: fechaDeNacimiento,
+      nombre,
+      password: contraseña,
+      rol: "CI",
+    });
+  };
+
   return (
     <Grid2
       container
@@ -30,12 +61,7 @@ export const SignupPage = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          console.log("datos ingresados", { correo, nombre, contraseña });
-        }}
-      >
+      <form onSubmit={handleSignup}>
         <Paper
           sx={{ px: 2, pb: 2.5, pt: 0.5 }}
           className="animate__animated animate__fadeIn"

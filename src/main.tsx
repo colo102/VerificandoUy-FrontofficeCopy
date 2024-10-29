@@ -5,21 +5,25 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { AppRouter } from "./router/AppRouter";
 import "animate.css";
 import { principalTheme } from "./theme/principal.theme";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 const router = createBrowserRouter([
   {
     path: "/*",
     element: <AppRouter />,
-    errorElement: <h2>Pagina no encontrada: 404</h2>,
+    /*  errorElement: <h2>Pagina no encontrada: 404</h2>, */
   },
 ]);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider theme={principalTheme}>
-      <CssBaseline />
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={principalTheme}>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
   </StrictMode>
 );
 
