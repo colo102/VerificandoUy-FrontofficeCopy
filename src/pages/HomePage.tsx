@@ -1,38 +1,24 @@
-import { Button, Container, Grid2 as Grid } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {
+    Box,
+    Container,
+
+    Button,
+} from "@mui/material";
+
 
 export const HomePage = () => {
-  return (
-    <>
-      <Grid container flexDirection="column" minHeight="100vh">
-        <Grid flexGrow={1} container>
-          <Main />
-        </Grid>
-      </Grid>
-    </>
-  );
+return (
+    <Container maxWidth="lg" sx={{ mt: 4 }}>
+
+
+        {/* Barra de categorías */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+            <Button color="primary" sx={{ mx: 1 }}>Todas las categorias</Button>
+
+        </Box>
+
+
+    </Container>
+);
 };
 
-const Main = () => {
-  const navigate = useNavigate();
-  return (
-    <Container sx={{ flex: 1 }}>
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        alignContent="center"
-        height="100%"
-      >
-        <Button
-          variant="outlined"
-          onClick={() => {
-            navigate("chat");
-          }}
-        >
-          Chat
-        </Button>
-      </Grid>
-    </Container>
-  );
-};

@@ -47,7 +47,8 @@ export const Chat = ({ height = 400, width = 250 }: ChatProps) => {
         flexDirection="column"
         sx={{
           height,
-          width: width * 4,
+          //width: width * 4,
+          width: typeof width === "number" ? width * 4 : width,
           boxShadow: "-4px -1px 18px -6px rgba(0,0,0,0.75);",
           borderRadius: "9px",
           overflow: "hidden",
