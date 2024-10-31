@@ -5,6 +5,10 @@ import {
   Paper,
   Typography,
   Link as LinkMui,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { FormContainer, FormItem } from "../components/Form";
 import { useState } from "react";
@@ -13,6 +17,9 @@ import { OtherMethods } from "../components/OtherMethodAuthentication";
 import { Link } from "react-router-dom";
 import VerificandoUyIcon from "/src/assets/verificandoUySoloImagen.svg";
 import useAuth from "../hooks/useAuth";
+import { useGetRolesQuery } from "../../store/apis/verificandoUyBackend/verificandoUyBackend.api";
+import { useAppDispatch } from "../../store/hooks/storeHooks";
+import { addError } from "../../store/verificandoUy/verificandoUySlice";
 
 export const SignupPage = () => {
   const [correo, setCorreo] = useState<string>("");
@@ -21,6 +28,10 @@ export const SignupPage = () => {
   const [fechaDeNacimiento, setFechaDeNacimiento] = useState<string>("");
   const [cedula, setCedula] = useState<string>("");
   const [contraseña, setContraseña] = useState<string>("");
+  const [rol, setRol] = useState<string>("");
+  const dispatch = useAppDispatch();
+
+  const { data } = useGetRolesQuery();
 
   const { signup } = useAuth();
 
@@ -31,7 +42,8 @@ export const SignupPage = () => {
       !apellido ||
       !fechaDeNacimiento ||
       !cedula ||
-      !contraseña
+      !contraseña ||
+      !rol
     )
       return false;
 
@@ -41,6 +53,26 @@ export const SignupPage = () => {
   const handleSignup = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!esValidoFormulario()) return;
+    let rolSimbolo = "";
+
+    switch (rol) {
+      case "Admin":
+        rolSimbolo = "A";
+        break;
+      case "Submitter":
+        rolSimbolo = "S";
+        break;
+      case "Checker":
+        rolSimbolo = "CH";
+        break;
+      case "Citizen":
+        rolSimbolo = "CI";
+        break;
+    }
+    if (!rolSimbolo) {
+      dispatch(addError({ errorMessage: "El campo Rol es obligatorio" }));
+      return;
+    }
 
     signup({
       apellido,
@@ -49,7 +81,7 @@ export const SignupPage = () => {
       fechaNacimiento: fechaDeNacimiento,
       nombre,
       password: contraseña,
-      rol: "CI",
+      rol: rolSimbolo,
     });
   };
 
@@ -122,6 +154,26 @@ export const SignupPage = () => {
                 placeholder="dd/MM/yyyy"
               />
             </FormContainer>
+            <Grid2>
+              <FormControl sx={{ width: "100%" }} size="small">
+                <InputLabel id="rol-select">Rol</InputLabel>
+                <Select
+                  label="Rol"
+                  labelId="rol-select"
+                  value={rol}
+                  onChange={(event) => {
+                    setRol(event.target.value);
+                  }}
+                >
+                  {data &&
+                    data.map((rol, index) => (
+                      <MenuItem value={rol} key={index + 1}>
+                        {rol}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Grid2>
             <FormItem
               fullwidth
               label="correo"

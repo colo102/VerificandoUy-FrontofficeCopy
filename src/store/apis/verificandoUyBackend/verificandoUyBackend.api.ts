@@ -35,7 +35,14 @@ export const verificandoUyApi = createApi({
         responseHandler: (response) => response.text(),
       }),
     }),
+    getRoles: builder.query<string[], void>({
+      query: () => "/roles",
+    }),
   }),
 });
-export const { useLoginMutation, useLogoutMutation, useSignupMutation } =
-  verificandoUyApi;
+export const {
+  useLoginMutation,
+  useLogoutMutation,
+  useSignupMutation,
+  useGetRolesQuery,
+} = verificandoUyApi;
