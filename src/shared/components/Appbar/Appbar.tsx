@@ -33,7 +33,7 @@ export const Appbar = () => {
 
     const handleLogout = () => {
         logout({ jwt: user.token });
-        navigate("/"); // Redirige al inicio después del logout
+        navigate("/auth/login"); // Redirige al inicio después del logout
     };
 
     return (
@@ -102,6 +102,9 @@ export const Appbar = () => {
                         >
                             <MenuItem onClick={handleMenuClose} component={Link} to="/gestion-hecho/crear">
                                 Crear Hecho
+                            </MenuItem>
+                            <MenuItem onClick={handleMenuClose} component={Link} to="/gestion-hecho/sugerir">
+                                Sugerir Hecho
                             </MenuItem>
                             <MenuItem onClick={handleMenuClose} component={Link} to="/gestion-hecho/listar">
                                 Listar Hechos

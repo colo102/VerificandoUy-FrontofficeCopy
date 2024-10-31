@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import type { RootState } from "../store";
+import SugerirHecho from "../../components/sugerirHecho/SugerirHecho.tsx";
 
 type Error = {
   isError: boolean;
@@ -67,6 +68,31 @@ export const crearHecho = createAsyncThunk(
       }
     }
 );
+
+export const sugerirHecho = createAsyncThunk(
+    "verificandoUy/sugerirHecho",
+    async (hechoData: { nombre: string; descripcion: string; categoria: string }, { getState, rejectWithValue }) => {
+      const state = getState() as RootState;
+      const token = state.verificandoUy.usuario.token; // Suponiendo que el token está en este estado
+
+      try {
+        const response = await axios.post("http://localhost:8080/api/hechos/suggest", hechoData, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // Añade el token en el encabezado de autorización
+          },
+        });
+        return response.data;
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+          return rejectWithValue(error.response.data);
+        } else {
+          return rejectWithValue({ message: "Error desconocido" });
+        }
+      }
+    }
+);
+
 export const verificandoUySlice = createSlice({
   name: "verificandoUy",
   // `createSlice` will infer the state type from the `initialState` argument
@@ -121,6 +147,22 @@ export const verificandoUySlice = createSlice({
           state.error.isError = true;
           const errorPayload = action.payload as ErrorPayload;
           state.error.errorMessage = errorPayload.message || "Error al crear el hecho";
+        })
+        .addCase(sugerirHecho.pending, (state) => {
+          state.isLoading = true;
+          state.error.isError = false;
+          state.success.isSuccess = false;
+        })
+        .addCase(sugerirHecho.fulfilled, (state) => {
+          state.isLoading = false;
+          state.success.isSuccess = true;
+          state.success.successMessage = "Hecho sugerido exitosamente";
+        })
+        .addCase(sugerirHecho.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error.isError = true;
+          const errorPayload = action.payload as ErrorPayload;
+          state.error.errorMessage = errorPayload.message || "Error al sugerir el hecho";
         });
   },
 });

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-
 import { HomePage } from "../pages/HomePage";
 import { Chat } from "../components/chat/Chat";
 import CrearHecho from "../components/crearHecho/CrearHecho";
+import SugerirHecho from "../components/sugerirHecho/SugerirHecho.tsx";
 import ListarHechos from "../components/listarHechos/ListarHechos";
 import { Appbar } from "../shared/components/Appbar/Appbar";
 import { AuthRouter } from "../auth/router/AuthRouter";
@@ -53,6 +54,7 @@ export const AppRouter = () => {
                 {/* Ruta padre para Gestión de Hecho */}
                 <Route path="/gestion-hecho">
                     <Route path="crear" element={<CrearHecho />} />
+                    <Route path="sugerir" element={<SugerirHecho />} />
                     <Route path="listar" element={<ListarHechos />} />
                 </Route>
                 <Route element={<HomePage />} path="/" />
