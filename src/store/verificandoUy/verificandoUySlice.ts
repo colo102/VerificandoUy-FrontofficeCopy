@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import type { RootState } from "../store";
-import SugerirHecho from "../../components/sugerirHecho/SugerirHecho.tsx";
+
 
 type Error = {
   isError: boolean;
@@ -24,6 +24,20 @@ interface VerificandoUyState {
   success: Success;
   isUserLogged: boolean;
   usuario: UsuarioState;
+  hechos: Hecho[];
+
+}
+
+interface Hecho {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  estado: string;
+  submitter: string;
+  checker: string;
+  dateCreated: string
+  categoria : string
+  seleccionado: boolean;
 }
 interface ErrorPayload {
   message?: string;
@@ -43,6 +57,7 @@ const initialState: VerificandoUyState = {
   },
   isUserLogged: false,
   usuario: { token: "" },
+  hechos: [],
 };
 // Thunk para crear un nuevo hecho
 export const crearHecho = createAsyncThunk(
@@ -93,6 +108,105 @@ export const sugerirHecho = createAsyncThunk(
     }
 );
 
+export const fetchHechosConFiltro = createAsyncThunk(
+    "verificandoUy/fetchHechosConFiltro",
+    async (filtros: { estado: string; submitterId: string; checkerId: string }, { getState, rejectWithValue }) => {
+      const state = getState() as RootState;
+      const token = state.verificandoUy.usuario.token;
+
+      try {
+        const response = await axios.get("http://localhost:8080/api/hechos/filter", {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+          params: {
+            estado: filtros.estado || undefined,
+            submitterId: filtros.submitterId || undefined,
+            checkerId: filtros.checkerId || undefined,
+          },
+        });
+        return response.data;
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+          return rejectWithValue(error.response.data);
+        } else {
+          return rejectWithValue({ message: "Error desconocido" });
+        }
+      }
+    }
+);
+
+export const fetchHechosPendientes = createAsyncThunk(
+    "verificandoUy/fetchHechosPendientes",
+    async (_, { getState, rejectWithValue }) => {
+      const state = getState() as RootState;
+      const token = state.verificandoUy.usuario.token;
+
+      try {
+        const response = await axios.get("http://localhost:8080/api/hechos/pendingByChecker", {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return rejectWithValue(error.response.data as ErrorPayload);
+        } else {
+          return rejectWithValue({ message: "Error desconocido" } as ErrorPayload);
+        }
+      }
+    }
+);
+export const tomarHecho = createAsyncThunk(
+    "verificandoUy/tomarHecho",
+    async (hechoId: string, { getState, rejectWithValue }) => {
+      const state = getState() as RootState;
+      const token = state.verificandoUy.usuario.token;
+
+      try {
+        const response = await axios.put(`http://localhost:8080/api/hechos/take/${hechoId}`, null, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        return response.data;
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+          return rejectWithValue(error.response.data);
+        } else {
+          return rejectWithValue({ message: "Error desconocido" });
+        }
+      }
+    }
+);export const verificarHecho = createAsyncThunk(
+    "verificandoUy/verificarHecho",
+    async ({ hechoId, justification, score }: { hechoId: string; justification: string; score: number }, { getState, rejectWithValue }) => {
+      const state = getState() as RootState;
+      const token = state.verificandoUy.usuario.token;
+
+      try {
+        const response = await axios.put(`http://localhost:8080/api/hechos/verify/${hechoId}`,
+        {
+          justification,
+              score,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        return response.data;
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+          return rejectWithValue(error.response.data);
+        } else {
+          return rejectWithValue({ message: "Error desconocido" });
+        }
+      }
+    }
+);
 export const verificandoUySlice = createSlice({
   name: "verificandoUy",
   // `createSlice` will infer the state type from the `initialState` argument
@@ -163,6 +277,65 @@ export const verificandoUySlice = createSlice({
           state.error.isError = true;
           const errorPayload = action.payload as ErrorPayload;
           state.error.errorMessage = errorPayload.message || "Error al sugerir el hecho";
+        })
+        .addCase(fetchHechosConFiltro.pending, (state) => {
+          state.isLoading = true;
+        })
+        .addCase(fetchHechosConFiltro.fulfilled, (state, action) => {
+          state.isLoading = false;
+          state.success.isSuccess = true;
+          state.success.successMessage = "Hechos filtrados cargados";
+          state.hechos = action.payload; // Suponiendo que agregaste un campo `hechos` en el estado
+        })
+        .addCase(fetchHechosConFiltro.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error.isError = true;
+          const errorPayload = action.payload as ErrorPayload;
+          state.error.errorMessage = errorPayload.message || "Error al cargar los hechos filtrados";
+
+        })
+        .addCase(tomarHecho.pending, (state) => {
+          state.isLoading = true;
+        })
+        .addCase(tomarHecho.fulfilled, (state) => {
+          state.isLoading = false;
+          state.success.isSuccess = true;
+          state.success.successMessage = "Hecho tomado exitosamente";
+          // Aquí podrías actualizar el estado de los hechos si fuera necesario
+        })
+        .addCase(tomarHecho.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error.isError = true;
+          const errorPayload = action.payload as ErrorPayload;
+          state.error.errorMessage = errorPayload.message || "Error al tomar el hecho";
+        })
+        .addCase(fetchHechosPendientes.pending, (state) => {
+          state.isLoading = true;
+        })
+        .addCase(fetchHechosPendientes.fulfilled, (state, action) => {
+          state.isLoading = false;
+          state.hechos = action.payload;
+        })
+        .addCase(fetchHechosPendientes.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error.isError = true;
+          // @ts-ignore
+          state.error.errorMessage = action.payload?.message || "Error al cargar los hechos pendientes";
+        })
+        .addCase(verificarHecho.pending, (state) => {
+          state.isLoading = true;
+        })
+        .addCase(verificarHecho.fulfilled, (state) => {
+          state.isLoading = false;
+          state.success.isSuccess = true;
+          state.success.successMessage = "Hecho verificado exitosamente";
+
+        })
+        .addCase(verificarHecho.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error.isError = true;
+          const errorPayload = action.payload as ErrorPayload;
+          state.error.errorMessage = errorPayload.message || "Error al verificar el hecho";
         });
   },
 });

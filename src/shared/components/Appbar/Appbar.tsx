@@ -101,13 +101,19 @@ export const Appbar = () => {
                             onClose={handleMenuClose}
                         >
                             <MenuItem onClick={handleMenuClose} component={Link} to="/gestion-hecho/crear">
-                                Crear Hecho
+                                CREAR Hecho
                             </MenuItem>
                             <MenuItem onClick={handleMenuClose} component={Link} to="/gestion-hecho/sugerir">
-                                Sugerir Hecho
+                                SUGERIR Hecho
                             </MenuItem>
-                            <MenuItem onClick={handleMenuClose} component={Link} to="/gestion-hecho/listar">
-                                Listar Hechos
+                            <MenuItem onClick={handleMenuClose} component={Link} to="/gestion-hecho/tomar">
+                                TOMAR Hecho
+                            </MenuItem>
+                            <MenuItem onClick={handleMenuClose} component={Link} to="/gestion-hecho/verificar">
+                                VERIFICAR Hecho
+                            </MenuItem>
+                            <MenuItem onClick={handleMenuClose} component={Link} to="/gestion-hecho/publicar-cancelar">
+                                PUBLICAR/CANCELAR Hecho
                             </MenuItem>
                         </Menu>
 
