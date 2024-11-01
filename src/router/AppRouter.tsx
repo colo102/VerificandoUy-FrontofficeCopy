@@ -11,6 +11,7 @@ import { Alert, Box, CircularProgress, Fade, Snackbar, Fab } from "@mui/material
 import ChatIcon from "@mui/icons-material/Chat"; // Importa el ícono de chat
 import { useAppDispatch, useAppSelector } from "../store/hooks/storeHooks";
 import {removeError, removeSuccess} from "../store/verificandoUy/verificandoUySlice";
+import PublicarHecho from "../components/publicarHecho/PublicarHecho.tsx";
 
 export const AppRouter = () => {
     const location = useLocation();
@@ -58,6 +59,7 @@ export const AppRouter = () => {
                     <Route path="sugerir" element={<SugerirHecho />} />
                     <Route path="tomar" element={<TomarHecho />} />
                     <Route path="verificar" element={<VerificarHecho />} />
+                    <Route path="publicar-cancelar" element={<PublicarHecho />} />
                 </Route>
                 <Route element={<HomePage />} path="/" />
                 <Route element={<Navigate to="/" replace />} path="*" />
