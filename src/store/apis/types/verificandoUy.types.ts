@@ -1,3 +1,5 @@
+import { Status } from "../../../interfaces/hecho.interfaces";
+
 export type LoginArgs = {
   email: string;
   password: string;
@@ -14,4 +16,9 @@ export type RegisterUsuarioArgs = {
   cedula: string;
   password: string;
   rol: string;
+};
+export type FilterHechosArgs = {
+  estado: Status;
+  submitterId: number;
+  checkerId: number;
 };

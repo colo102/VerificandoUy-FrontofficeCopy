@@ -1,9 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
+  FilterHechosArgs,
   LoginArgs,
   LogoutArgs,
   RegisterUsuarioArgs,
 } from "../types/verificandoUy.types";
+import { Hecho } from "../../../interfaces/hecho.interfaces";
 
 const verificandoUYApiURL = "http://localhost:8080";
 
@@ -38,6 +40,10 @@ export const verificandoUyApi = createApi({
     getRoles: builder.query<string[], void>({
       query: () => "/roles",
     }),
+    getFilterHechos: builder.query<Hecho[], FilterHechosArgs>({
+      query: ({ checkerId, estado, submitterId }) =>
+        `/api/hechos/filter?estado=${estado}&submitterId=${submitterId}&checkerId=${checkerId}`,
+    }),
   }),
 });
 export const {
@@ -45,4 +51,5 @@ export const {
   useLogoutMutation,
   useSignupMutation,
   useGetRolesQuery,
+  useLazyGetFilterHechosQuery,
 } = verificandoUyApi;
