@@ -41,7 +41,7 @@ const TomarHechos = () => {
     };
 
     const verificarHechos = () => {
-       if (selectedHechoId) {
+        if (selectedHechoId) {
             dispatch(tomarHecho(selectedHechoId));
         }
     };

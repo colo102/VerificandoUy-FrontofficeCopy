@@ -52,6 +52,7 @@ export const AppRouter = () => {
             <Routes>
                 <Route element={<HomePage />} path="/" />
                 {!isUserLogged && <Route element={<AuthRouter />} path="/auth/*" />}
+
                 <Route element={<Chat />} path="/chat" />
                 {/* Ruta padre para Gestión de Hecho */}
                 <Route path="/gestion-hecho">

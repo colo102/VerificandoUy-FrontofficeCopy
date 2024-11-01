@@ -235,7 +235,28 @@ export const publicarHecho = createAsyncThunk(
         }
     }
 );
+export const cancelarHecho = createAsyncThunk(
+    "verificandoUy/cancelarHecho",
+    async (hechoId: string, { getState, rejectWithValue }) => {
+        const state = getState() as RootState;
+        const token = state.verificandoUy.usuario.token;
 
+        try {
+            const response = await axios.put(`http://localhost:8080/api/hechos/cancel/${hechoId}`, null, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                return rejectWithValue(error.response.data);
+            } else {
+                return rejectWithValue({ message: "Error desconocido" });
+            }
+        }
+    }
+);
 export const verificarHecho = createAsyncThunk(
     "verificandoUy/verificarHecho",
     async ({ hechoId, justification, score }: { hechoId: string; justification: string; score: number }, { getState, rejectWithValue }) => {
@@ -366,17 +387,18 @@ export const verificandoUySlice = createSlice({
         .addCase(tomarHecho.pending, (state) => {
           state.isLoading = true;
         })
-        .addCase(tomarHecho.fulfilled, (state) => {
+        .addCase(tomarHecho.fulfilled, (state)  => {
           state.isLoading = false;
           state.success.isSuccess = true;
           state.success.successMessage = "Hecho tomado exitosamente";
-          // Aquí podrías actualizar el estado de los hechos si fuera necesario
+
         })
-        .addCase(tomarHecho.rejected, (state, action) => {
+        .addCase(tomarHecho.rejected, (state,action) => {
           state.isLoading = false;
           state.error.isError = true;
           const errorPayload = action.payload as ErrorPayload;
           state.error.errorMessage = errorPayload.message || "Error al tomar el hecho";
+
         })
         .addCase(publicarHecho.pending, (state) => {
             state.isLoading = true;
@@ -422,7 +444,21 @@ export const verificandoUySlice = createSlice({
           const errorPayload = action.payload as ErrorPayload;
           state.error.errorMessage = errorPayload.message || "Error al verificar el hecho";
         })
+        .addCase(cancelarHecho.pending, (state) => {
+            state.isLoading = true;
+        })
+        .addCase(cancelarHecho.fulfilled, (state) => {
+            state.isLoading = false;
+            state.success.isSuccess = true;
+            state.success.successMessage = "Hecho cancelado exitosamente";
 
+        })
+        .addCase(cancelarHecho.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error.isError = true;
+            const errorPayload = action.payload as ErrorPayload;
+            state.error.errorMessage = errorPayload.message || "Error al tomar el hecho";
+        })
   },
 });
 

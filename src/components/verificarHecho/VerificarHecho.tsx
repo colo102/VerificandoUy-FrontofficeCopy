@@ -120,7 +120,7 @@ const VerificarHecho = () => {
                     disabled={!selectedHechoId || !justification || score === 0}
                     onClick={handleVerificarHecho}
                 >
-                    Enviar para Verificar
+                    Enviar para Publicar
                 </Button>
             </Box>
         </Container>

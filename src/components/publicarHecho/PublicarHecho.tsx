@@ -15,6 +15,7 @@ import {
 import {useEffect, useState} from "react";
 import { RootState } from "../../store/store.ts";
 import {
+    cancelarHecho,
     fetchHechosConFiltroVerificado,
     publicarHecho
 } from "../../store/verificandoUy/verificandoUySlice.ts";
@@ -46,6 +47,11 @@ const PublicarHechos = () => {
     const publicarHechos = () => {
         if (selectedHechoId) {
             dispatch(publicarHecho(selectedHechoId));
+        }
+    };
+    const cancelarHechos = () => {
+        if (selectedHechoId) {
+            dispatch(cancelarHecho(selectedHechoId));
         }
     };
 
@@ -94,7 +100,7 @@ const PublicarHechos = () => {
             )}
 
             {/* Botón Verificar Debajo de la Tabla */}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
                 <Button
                     variant="contained"
                     color="primary"
@@ -102,6 +108,14 @@ const PublicarHechos = () => {
                     onClick={publicarHechos}
                 >
                     PUBLICAR
+                </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={!selectedHechoId} // Solo se habilita si hay un hecho seleccionado
+                    onClick={cancelarHechos}
+                >
+                    CANCELAR
                 </Button>
             </Box>
         </Container>
