@@ -19,7 +19,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks/storeHooks.ts"
 
 const TomarHechos = () => {
     const dispatch = useAppDispatch();
-    const hechosFromRedux = useAppSelector((state: RootState) => state.verificandoUy.hechos);
+    const hechosFromRedux = useAppSelector((state: RootState) => state.verificandoUy.hechosFiltrados);
     const isLoading = useAppSelector((state: RootState) => state.verificandoUy.isLoading);
 
     // Estado para almacenar el ID del hecho seleccionado

@@ -14,12 +14,15 @@ import {
 } from '@mui/material';
 import {useEffect, useState} from "react";
 import { RootState } from "../../store/store.ts";
-import {fetchHechosConFiltro, publicarHecho} from "../../store/verificandoUy/verificandoUySlice.ts";
+import {
+    fetchHechosConFiltroVerificado,
+    publicarHecho
+} from "../../store/verificandoUy/verificandoUySlice.ts";
 import { useAppDispatch, useAppSelector } from "../../store/hooks/storeHooks.ts";
 
 const PublicarHechos = () => {
     const dispatch = useAppDispatch();
-    const hechosFromRedux = useAppSelector((state: RootState) => state.verificandoUy.hechos);
+    const hechosFromRedux = useAppSelector((state: RootState) => state.verificandoUy.hechosVerificados);
     const isLoading = useAppSelector((state: RootState) => state.verificandoUy.isLoading);
 
     // Estado para almacenar el ID del hecho seleccionado
@@ -31,7 +34,7 @@ const PublicarHechos = () => {
     // useEffect que solo se ejecuta una vez al montar el componente y cuando `hechosFromRedux` está vacío
     useEffect(() => {
         if (!isLoading && hechosFromRedux.length === 0) {
-            dispatch(fetchHechosConFiltro(filtros));
+            dispatch(fetchHechosConFiltroVerificado(filtros));
         }
     }, [dispatch, isLoading, hechosFromRedux.length]); // Dependencias ajustadas
 

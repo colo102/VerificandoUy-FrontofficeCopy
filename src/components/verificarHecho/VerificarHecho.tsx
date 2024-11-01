@@ -20,7 +20,7 @@ import { fetchHechosPendientes, verificarHecho } from '../../store/verificandoUy
 
 const VerificarHecho = () => {
     const dispatch = useAppDispatch();
-    const hechosFromRedux = useAppSelector((state: RootState) => state.verificandoUy.hechos);
+    const hechosFromRedux = useAppSelector((state: RootState) => state.verificandoUy.hechosEnProceso);
     const isLoading = useAppSelector((state: RootState) => state.verificandoUy.isLoading);
 
     // Estado para el hecho seleccionado, justificación y puntuación

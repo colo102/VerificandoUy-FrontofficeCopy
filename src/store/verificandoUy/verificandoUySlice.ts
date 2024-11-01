@@ -25,7 +25,9 @@ interface VerificandoUyState {
   success: Success;
   isUserLogged: boolean;
   usuario: UsuarioState;
-  hechos: Hecho[];
+  hechosFiltrados: Hecho[];
+  hechosVerificados: Hecho[];
+  hechosEnProceso: Hecho[];
 
 }
 
@@ -58,7 +60,9 @@ const initialState: VerificandoUyState = {
   },
   isUserLogged: false,
   usuario: { token: "" },
-  hechos: [],
+    hechosFiltrados: [],
+    hechosEnProceso: [],
+    hechosVerificados: [],
 };
 // Thunk para crear un nuevo hecho
 export const crearHecho = createAsyncThunk(
@@ -106,6 +110,34 @@ export const sugerirHecho = createAsyncThunk(
           return rejectWithValue({ message: "Error desconocido" });
         }
       }
+    }
+);
+
+export const fetchHechosConFiltroVerificado = createAsyncThunk(
+    "verificandoUy/fetchHechosConFiltroVerificado",
+    async (filtros: { estado: string; submitterId: string; checkerId: string }, { getState, rejectWithValue }) => {
+        const state = getState() as RootState;
+        const token = state.verificandoUy.usuario.token;
+
+        try {
+            const response = await axios.get("http://localhost:8080/api/hechos/filter", {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+                params: {
+                    estado: filtros.estado || undefined,
+                    submitterId: filtros.submitterId || undefined,
+                    checkerId: filtros.checkerId || undefined,
+                },
+            });
+            return response.data;
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                return rejectWithValue(error.response.data);
+            } else {
+                return rejectWithValue({ message: "Error desconocido" });
+            }
+        }
     }
 );
 
@@ -203,6 +235,7 @@ export const publicarHecho = createAsyncThunk(
         }
     }
 );
+
 export const verificarHecho = createAsyncThunk(
     "verificandoUy/verificarHecho",
     async ({ hechoId, justification, score }: { hechoId: string; justification: string; score: number }, { getState, rejectWithValue }) => {
@@ -309,7 +342,7 @@ export const verificandoUySlice = createSlice({
           state.isLoading = false;
           state.success.isSuccess = true;
           state.success.successMessage = "Hechos filtrados cargados";
-          state.hechos = action.payload; // Suponiendo que agregaste un campo `hechos` en el estado
+          state.hechosFiltrados = action.payload; // Suponiendo que agregaste un campo `hechos` en el estado
         })
         .addCase(fetchHechosConFiltro.rejected, (state, action) => {
           state.isLoading = false;
@@ -317,6 +350,18 @@ export const verificandoUySlice = createSlice({
           const errorPayload = action.payload as ErrorPayload;
           state.error.errorMessage = errorPayload.message || "Error al cargar los hechos filtrados";
 
+        })
+        .addCase(fetchHechosConFiltroVerificado.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.success.isSuccess = true;
+            state.success.successMessage = "Hechos verificados cargados";
+            state.hechosVerificados = action.payload; // Suponiendo que agregaste un campo `hechos` en el estado
+        })
+        .addCase(fetchHechosConFiltroVerificado.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error.isError = true;
+            const errorPayload = action.payload as ErrorPayload;
+            state.error.errorMessage = errorPayload.message || "Error al cargar los hechos verificados";
         })
         .addCase(tomarHecho.pending, (state) => {
           state.isLoading = true;
@@ -353,7 +398,7 @@ export const verificandoUySlice = createSlice({
         })
         .addCase(fetchHechosPendientes.fulfilled, (state, action) => {
           state.isLoading = false;
-          state.hechos = action.payload;
+          state.hechosEnProceso = action.payload;
         })
         .addCase(fetchHechosPendientes.rejected, (state,action) => {
           state.isLoading = false;
@@ -376,7 +421,8 @@ export const verificandoUySlice = createSlice({
           state.error.isError = true;
           const errorPayload = action.payload as ErrorPayload;
           state.error.errorMessage = errorPayload.message || "Error al verificar el hecho";
-        });
+        })
+
   },
 });
 
